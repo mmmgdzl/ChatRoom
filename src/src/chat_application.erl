@@ -19,8 +19,9 @@
 %%% Application callbacks
 %%%===================================================================
 start(_StartType, StartArgs) ->
-  chat_supervisor:start_link(StartArgs),
-  socket_supervisor:start_link(StartArgs).
+  base_supervisor:start_link(StartArgs),
+  socket_supervisor:start_link(StartArgs),
+  room_supervisor:start_link(StartArgs).
 
 stop(_State) ->
   ok.

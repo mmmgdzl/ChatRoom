@@ -29,7 +29,7 @@
 % SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 %
 -module(uuid).
--export([v4/0, to_string/1, to_string_extra/1, get_parts/1, to_binary/1]).
+-export([v4/0, get/0, to_string/1, to_string_extra/1, get_parts/1, to_binary/1]).
 
 % Generates a random binary UUID.
 v4() ->
@@ -40,6 +40,10 @@ v4(R1, R2, R3, R4) ->
 % Returns a string representation of a binary UUID.
 to_string(U) ->
     lists:flatten(io_lib:format("~8.16.0b-~4.16.0b-~4.16.0b-~2.16.0b~2.16.0b-~12.16.0b", get_parts(U))).
+
+%直接获取
+get() ->
+    to_string_extra(v4()).
 %没有横线的版本
 to_string_extra(U) ->
     lists:flatten(io_lib:format("~8.16.0b~4.16.0b~4.16.0b~2.16.0b~2.16.0b~12.16.0b", get_parts(U))).
