@@ -21,4 +21,4 @@ rel/example_project
 out
 gen
 /.idea/
-/src/errorLogs/
+/errorLogs/

@@ -17,23 +17,22 @@
 %%% API函数
 %%%===================================================================
 start_link(Args) ->
-  supervisor:start_link({local, ?SERVER}, ?MODULE, Args).
+    supervisor:start_link({local, ?SERVER}, ?MODULE, Args).
 %%%===================================================================
 %%% 监控器回调函数
 %%%===================================================================
 init([]) ->
-  RestartStrategy = one_for_one,
-  MaxRestarts = 1000,
-  MaxSecondsBetweenRestarts = 3600,
-  SupFlags = {RestartStrategy, MaxRestarts, MaxSecondsBetweenRestarts},
-  Restart = permanent,
-  Shutdown = 2000,
-  Type = worker,
-  ChildList = [
-%%    {chat_server, {chat_server, start_link, []}, Restart, Shutdown, Type, [chat_server]},
-    {user_server, {user_server, start_link, []}, Restart, Shutdown, Type, [user_server]}
-  ],
-  {ok, {SupFlags, ChildList}}.
+    RestartStrategy = one_for_one,
+    MaxRestarts = 1000,
+    MaxSecondsBetweenRestarts = 3600,
+    SupFlags = {RestartStrategy, MaxRestarts, MaxSecondsBetweenRestarts},
+    Restart = permanent,
+    Shutdown = 2000,
+    Type = worker,
+    ChildList = [
+        {user_server, {user_server, start_link, []}, Restart, Shutdown, Type, [user_server]}
+    ],
+    {ok, {SupFlags, ChildList}}.
 %%%===================================================================
 %%% 内部函数
 %%%===================================================================
