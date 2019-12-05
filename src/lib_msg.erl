@@ -15,9 +15,9 @@
 
 %% 编码
 encode_msg(0 = State, Echo) ->
-    BResultType = encode_string(Echo#s2c_user_register_0.result_type),
-    BWorldRoomId = encode_string(Echo#s2c_user_register_0.world_room_id),
-    <<State:16, BResultType/binary, (Echo#s2c_user_register_0.user_id):16, BWorldRoomId/binary>>;
+    BResultType = encode_string(Echo#s2c_user_save_info_0.result_type),
+    BWorldRoomId = encode_string(Echo#s2c_user_save_info_0.world_room_id),
+    <<State:16, BResultType/binary, (Echo#s2c_user_save_info_0.user_id):16, BWorldRoomId/binary>>;
 encode_msg(1 = State, Echo) ->
     BResultType = encode_string(Echo#s2c_create_room_1.result_type),
     case Echo#s2c_create_room_1.result_type of
@@ -94,7 +94,7 @@ safe_decode_msg(Binary) ->
 decode_map(0, Binary) ->
     <<Size:16, BUsername:Size/binary, Binary2/binary>> = Binary,
     <<Avatar:16>> = Binary2,
-    #c2s_user_register_0{username = binary_to_list(BUsername), avatar = Avatar};
+    #c2s_user_save_info_0{username = binary_to_list(BUsername), avatar = Avatar};
 decode_map(1, Binary) ->
     <<Size:16, BRoomName:Size/binary>> = Binary,
     #c2s_create_room_1{room_name = binary_to_list(BRoomName)};
@@ -105,7 +105,7 @@ decode_map(3, Binary) ->
     <<Size:16, BRoomId:Size/binary>> = Binary,
     #c2s_user_exit_room_3{room_id = binary_to_list(BRoomId)};
 decode_map(4, _Binary) ->
-    undefined;
+    #c2s_list_rooms_4{};
 decode_map(5, Binary) ->
     <<Size:16, Message:Size/binary, Binary2/binary>> = Binary,
     <<Size2:16, RoomId:Size2/binary>> = Binary2,

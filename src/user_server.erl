@@ -45,25 +45,32 @@ delete_user(UserId) ->
 init([]) ->
     {ok, #state{user_table = ets:new(room_users, [set, named_table, {keypos, #user.id}])}}.
 
-handle_call(Request, _From, State) ->
-    ?UN_HANDLE_CALL(Request),
-    {reply, _From, State}.
+handle_call(Request, From, State) ->
+    try
+        do_handle_call(Request, From, State)
+    catch
+        Type : Reason ->
+            error_logger:error_msg("~p handle call cause ~p:~p with ~p ~p~n", [?MODULE, Type, Reason, Request, State]),
+            {reply, From, State}
+    end.
 
-%% 保存用户信息
-handle_cast({add_uesr, UserId, Username, Avatar, PName}, State) ->
-    ets:insert(State#state.user_table, #user{id = UserId, name = Username, avatar = Avatar, p_name = PName}),
-    {noreply, State};
-%% 删除某个用户
-handle_cast({delete_user, UserId}, State) ->
-    ets:delete(State#state.user_table, UserId),
-    {noreply, State};
 handle_cast(Request, State) ->
-    ?UN_HANDLE_CAST(Request),
-    {noreply, State}.
+    try
+        do_handle_cast(Request, State)
+    catch
+        Type : Reason ->
+            error_logger:error_msg("~p handle cast cause ~p:~p with ~p ~p~n", [?MODULE, Type, Reason, Request, State]),
+            {noreply, State}
+    end.
 
 handle_info(Info, State) ->
-    ?UN_HANDLE_INFO(Info),
-    {noreply, State}.
+    try
+        do_handle_info(Info, State)
+    catch
+        Type : Reason ->
+            error_logger:error_msg("~p handle cast cause ~p:~p with ~p ~p~n", [?MODULE, Type, Reason, Info, State]),
+            {noreply, State}
+    end.
 
 terminate(_Reason, _State) ->
     ok.
@@ -74,4 +81,25 @@ code_change(_OldVsn, State, _Extra) ->
 %%%===================================================================
 %%% Internal functions
 %%%===================================================================
+%% handle_call
+do_handle_call(Request, _From, State) ->
+    ?UN_HANDLE_CALL(Request),
+    {reply, _From, State}.
 
+%% handle_cast
+%% 保存用户信息
+do_handle_cast({add_uesr, UserId, Username, Avatar, PName}, State) ->
+    ets:insert(State#state.user_table, #user{id = UserId, name = Username, avatar = Avatar, p_name = PName}),
+    {noreply, State};
+%% 删除某个用户
+do_handle_cast({delete_user, UserId}, State) ->
+    ets:delete(State#state.user_table, UserId),
+    {noreply, State};
+do_handle_cast(Request, State) ->
+    ?UN_HANDLE_CAST(Request),
+    {noreply, State}.
+
+%% handle_info
+do_handle_info(Info, State) ->
+    ?UN_HANDLE_INFO(Info),
+    {noreply, State}.
